@@ -1,0 +1,17 @@
+#!/bin/sh
+
+if [ -z $client_id ]; then
+  client_id="not-set"
+fi
+
+if [ -z $client_secret ]; then
+  client_secret="not-set"
+fi
+
+
+
+echo "getting token for client_id $client_id"
+
+
+curl -s -H "Content-Type: application/x-www-form-urlencoded" -X POST -d "grant_type=client_credentials&scope=SCOPE_NAME&client_id=${client_id}&client_secret=${client_secret}" https://api.yaas.io/hybris/oauth2/b1/token | jq .
+
