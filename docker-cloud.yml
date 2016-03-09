@@ -10,7 +10,7 @@ graphite:
   ports:
     - '8080:80'
     - '2003:2003'
-    - '8125:8125'
+    - '8125:8125/udp'
   restart: always
 weather-carbon-feeder:
   image: 'k9ert/docker-weather-carbon-feeder:latest'
