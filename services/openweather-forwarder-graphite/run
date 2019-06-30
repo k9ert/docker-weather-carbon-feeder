@@ -4,12 +4,14 @@ if [ -n $APIKEY ]; then
   APIKEY="APPID=$APIKEY"
 fi
 
-if [ -z $GRAPHITE_HOST ]; then
-  GRAPHITE_HOST="graphite"
+if [ -z $GRAPHITE_HOST ] && [ -z $NODERED_HOST ]; then
+  echo "you need to specify either GRAPHITE_HOST or NODERED_HOST"
+  exit 2
 fi
 
-if [ -z $NODERED_HOST ]; then
-  NODERED_HOST="not-set"
+if [ -n $GRAPHITE_PREFIX ]; then
+  echo "Using GRAPHITE_PREFIX $GRAPHITE_PREFIX"
+  GRAPHITE_PREFIX=${GRAPHITE_PREFIX}.
 fi
 
 while [ $# -gt 0 ]; do
@@ -20,6 +22,10 @@ while [ $# -gt 0 ]; do
     -g) 
       GRAPHITE_HOST=$2
       echo "GRAPHITE_HOST set to $GRAPHITE_HOST "
+      shift 2 ;;
+    -n) 
+      NODERED_HOST=$2
+      echo "NODERED_HOST set to $NODERED_HOST "
       shift 2 ;;
   esac
 done
@@ -38,8 +44,8 @@ while true; do
         echo "stats.test.outside $celsius (to nodered $NODERED_HOST) "
       fi
       if [ ! -z $GRAPHITE_HOST ]; then
-        echo "stats.test.outside $celsius `date +%s`" | nc ${GRAPHITE_HOST} ${PORT};
-        echo "stats.test.outside $celsius `date +%s`"
+        echo "${GRAPHITE_PREFIX}stats.test.outside $celsius `date +%s`" | nc ${GRAPHITE_HOST} ${PORT};
+        echo "${GRAPHITE_PREFIX}stats.test.outside $celsius `date +%s` (to graphite $GRAPHITE_HOST) "
       fi
     else
       echo "$celsius doesn't look like a proper value .. ommitting"
