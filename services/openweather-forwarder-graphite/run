@@ -31,19 +31,21 @@ while true; do
   SERVER=6ee324c3.carbon.hostedgraphite.com
   kelvin=`curl -s "api.openweathermap.org/data/2.5/weather?id=6940463&APPID=f0a082fe2fabfd320d7cd97be1b4b929" | jq .main.temp`
   celsius=`echo  "${kelvin}-273.15"  | bc`
-  if [ $(echo " $celsius > -100" | bc) -eq 1 ];  then
-    if [ ! -z $NODERED_HOST ]; then
-      echo "stats.test.outside $celsius" | nc ${NODERED_HOST} ${PORT};
-      echo "stats.test.outside $celsius (to nodered $NODERED_HOST) "
+  for i in 1 2 3 4 5 6 ; do
+    if [ $(echo " $celsius > -100" | bc) -eq 1 ];  then
+      if [ ! -z $NODERED_HOST ]; then
+        echo "stats.test.outside $celsius" | nc ${NODERED_HOST} ${PORT};
+        echo "stats.test.outside $celsius (to nodered $NODERED_HOST) "
+      fi
+      if [ ! -z $GRAPHITE_HOST ]; then
+        echo "stats.test.outside $celsius `date +%s`" | nc ${GRAPHITE_HOST} ${PORT};
+        echo "stats.test.outside $celsius `date +%s`"
+      fi
+    else
+      echo "$celsius doesn't look like a proper value .. ommitting"
     fi
-    if [ ! -z $GRAPHITE_HOST ]; then
-      echo "stats.test.outside $celsius `date +%s`" | nc ${GRAPHITE_HOST} ${PORT};
-      echo "stats.test.outside $celsius `date +%s`"
-    fi
-  else
-    echo "$celsius doesn't look like a proper value .. ommitting"
-  fi
-  sleep 60
+    sleep 10
+  done
 done
 
 
