@@ -1,11 +1,11 @@
 #!/bin/sh
 
 if [ -n $APIKEY ]; then
-  APIKEY="&APPID=$APIKEY"
+  APIKEY="APPID=$APIKEY"
 fi
 
 if [ -z $GRAPHITE_HOST ]; then
-  GRAPHITE_HOST="not-set"
+  GRAPHITE_HOST="graphite"
 fi
 
 if [ -z $NODERED_HOST ]; then
@@ -15,7 +15,7 @@ fi
 while [ $# -gt 0 ]; do
   case "$1" in
     -a) 
-      APIKEY="&APPID=$2"
+      APIKEY="APPID=$2"
       shift 2 ;;
     -g) 
       GRAPHITE_HOST=$2
